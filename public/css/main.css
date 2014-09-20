@@ -1,0 +1,3 @@
+* {font-size: 1em;}
+#messages{border:1px solid #777; width: 50em; height:15em; overflow: auto;}
+#message{width: 50em; height:4em;}
