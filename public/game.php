@@ -13,10 +13,14 @@
             var conn = new WebSocket('ws://localhost:8080'),
                 Block = {id: new Date().getTime()}
                 
-            Block.create = function(data) {
+            Block.create = function(data, color) {
                 var $div = $('<div class="block" id="' + data.id + '">');
                 
                 $div.css({top: data.y, left: data.x});
+                
+                if (color) {
+                    $div.css('background', 'red');
+                }
                 
                 $('#space').append($div);
             }
@@ -78,7 +82,7 @@
                 
                 conn.send(JSON.stringify(data));
                 
-                Block.create(data.content);
+                Block.create(data.content, true);
             };
 
             conn.onmessage = function(e) {
