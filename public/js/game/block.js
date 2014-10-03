@@ -1,12 +1,12 @@
 var Block = {id: new Date().getTime()};
     
 Block.create = function(data, color) {
-    var $div = $('<div class="block" id="' + data.id + '">');
+    var $div = $('<div class="ui segment inverted block" id="' + data.id + '">');
     
     $div.css({top: data.y, left: data.x});
     
     if (color) {
-        $div.css('background', 'red');
+        $div.addClass('inverted red');
     }
     
     $('#space').append($div);
@@ -18,6 +18,17 @@ Block.init = function(data) {
             Block.create(this.content);
         });
     }
+}
+
+Block.random = function(){
+    return {
+        type: 'update',
+        content: {
+            id: Block.id,
+            x: Math.floor((Math.random()*15))*50,
+            y: Math.floor((Math.random()*7))*50
+        }
+    };
 }
 
 Block.delete = function(data) {
@@ -52,7 +63,20 @@ Block.collision = function(data) {
         cy = parseInt($this.css('top'), 10);
         
         if (cy == data.y && cx == data.x) {
-            alert('Pegou!!!!!');
+            var random = Block.random().content;
+            
+            $('#' + random.id).css({top: random.y, left: random.x});
+            
+            conn.send(JSON.stringify({
+                type: 'update',
+                content: random
+            }));
+            
+            $('#message').show();
+            
+            setTimeout(function(){
+                $('#message').hide('fast');
+            }, 3000);
         }
     });
 }
@@ -82,15 +106,29 @@ $(document).keypress(function(e){
             $block.css('left', valuex > 750 ? 750 : valuex);
             break;
     }
-
-    conn.send(JSON.stringify({
+    
+    var data = {
         type: 'update',
         content: {
             id: Block.id,
             x: valuex,
             y: valuey
         }
-    }));
+    }
+
+    conn.send(JSON.stringify(data));
     
     Block.collision(data.content);
+});
+
+$(document).keyup(function(e){
+    var $block = $('#' + Block.id),
+        x = parseInt($block.css('left'), 10),
+        y = parseInt($block.css('top'), 10);
+        
+    Block.collision({
+        id: Block.id,
+        x: x,
+        y: y
+    });
 });

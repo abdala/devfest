@@ -1,14 +1,7 @@
-var conn = new WebSocket('ws://localhost:8080');
+var conn = new WebSocket('ws://192.168.0.24:8080');
 
 conn.onopen = function(e) {
-     var data = {
-        type: 'update',
-        content: {
-            id: Block.id,
-            x: Math.floor((Math.random()*15))*50,
-            y: Math.floor((Math.random()*7))*50
-        }
-    }
+    var data = Block.random();
     
     conn.send(JSON.stringify(data));
     
